@@ -81,7 +81,9 @@ public class TcpClient implements LClient {
         while (isConnected()) {
             String str = null;
             try {
-                str = mDataInputStream.readUTF();
+                byte[] bytes = new byte[1024];
+                int read = mDataInputStream.read(bytes);
+                str = new String(bytes, 0, read, "UTF-8");
                 if (mSocketIOCallback != null) {
                     mSocketIOCallback.onReceive(str);
                 }
@@ -133,23 +135,50 @@ public class TcpClient implements LClient {
 
     @Override
     public void send(byte[] bytes, ISendCallBack callback) { //发送数据
-
-    }
-
-    @Override
-    public void sendStr(String strData, ISendCallBack callBack) {
         synchronized (TcpClient.class) {
             if (isConnected()) {
                 try {
-                    mDataOutputStream.writeUTF("屁屁下我们走");
+                    mDataOutputStream.write(bytes);
                     mDataOutputStream.flush();
                 } catch (IOException e) {
-                    callBack.onFailed(e);
+                    callback.onFailed(e);
                     disConnect(true);
                     e.printStackTrace();
                 }
             } else {
-                callBack.onFailed(new Exception("socket is not connected"));
+                callback.onFailed(new Exception("socket is not connected"));
+                disConnect(true);
+            }
+        }
+
+    }
+
+    @Override
+    public void sendStr(String strData) {
+        synchronized (TcpClient.class) {
+            if (isConnected()) {
+                try {
+                    mDataOutputStream.writeUTF(strData);
+                    mDataOutputStream.flush();
+                } catch (IOException e) {
+                    disConnect(true);
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void send(byte[] bytes) {
+        synchronized (TcpClient.class) {
+            if (isConnected()) {
+                try {
+                    mDataOutputStream.write(bytes, 0, bytes.length);
+                    mDataOutputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
                 disConnect(true);
             }
         }

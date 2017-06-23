@@ -1,0 +1,27 @@
+﻿小米开发者帐号
+18039670070
+growing@zaichengzhang.net
+XMgrowing2014
+
+华为开发者帐号
+
+13592691343
+growing@zaichengzhang.net
+HWgrowing2014
+uArZmr+5QJMz0JS4REEhSrd+Rs3X409KvtDH3fC6Qhg=
+
+发送文件步骤：1.文件名 2.文件大小 3.包的大小 4.包的数量 5.循环字节流
+
+Formatter.formatFileSize(this, Long.valueOf(target_size));//工具类 根据文件大小自动转化为KB, MB, GB
+   private String formatSize(String target_size) {
+        return Formatter.formatFileSize(activity, Long.valueOf(target_size));
+    }
+
+formatSize（123456）；
+结果：121KB
+
+formatSize（12345612）；
+11.77MB
+
+formatSize（1234561234）；
+结果：1.15GB

@@ -33,8 +33,9 @@ public interface LClient {
 
     void send(byte[] bytes, ISendCallBack callback);
 
-    void sendStr(String strData, ISendCallBack callBack);
+    void sendStr(String strData);
 
+    void send(byte[] bytes);
 
     /**
      * @return 返回socket连接状态

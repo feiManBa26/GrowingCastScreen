@@ -11,10 +11,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.growing.castscreen.base.BaseAppCommpatActivity;
-import com.growing.castscreen.localSocket.ISendCallBack;
 import com.growing.castscreen.localSocket.LClient;
 import com.growing.castscreen.services.CastScreenServices;
 import com.growing.castscreen.utils.CommonUtil;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,14 +115,28 @@ public class MainActivity extends BaseAppCommpatActivity {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    LClient lClient = CastScreenServices.getmLClient();
-                                    lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
-                                    lClient.sendStr("哈哈哈", new ISendCallBack() {
-                                        @Override
-                                        public void onFailed(Exception e) {
-                                            System.out.print(e.toString());
-                                        }
-                                    });
+                                    try {
+                                        InputStream inputStream = getResources().getAssets().open("open.txt");
+                                        int available = inputStream.available(); //文件的字节长度
+                                        byte[] bytes = new byte[(int) inputStream.available()];
+                                        inputStream.read(bytes);
+                                        Log.i(TAG, "run: " + bytes.length);
+                                        String fileLength = available + "";
+                                        String fileName = "open.txt";
+
+                                        LClient lClient = CastScreenServices.getmLClient();
+                                        lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
+
+                                        String str = "helloworld";
+                                        byte[] strBytes = str.getBytes("UTF-8");
+                                        int length = strBytes.length;
+                                        lClient.send(intToBytes(length));
+                                        lClient.send(strBytes);
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }).start();
                         }
@@ -127,6 +144,23 @@ public class MainActivity extends BaseAppCommpatActivity {
                     break;
             }
         }
+
+    }
+
+    public enum TransferCommandTypes {
+        SendFile,
+        SendString,
+        Screen
+    }
+
+
+    public static byte[] intToBytes(int value) {
+        byte[] byte_src = new byte[4];
+        byte_src[3] = (byte) ((value & 0xFF000000) >> 24);
+        byte_src[2] = (byte) ((value & 0x00FF0000) >> 16);
+        byte_src[1] = (byte) ((value & 0x0000FF00) >> 8);
+        byte_src[0] = (byte) ((value & 0x000000FF));
+        return byte_src;
     }
 
 

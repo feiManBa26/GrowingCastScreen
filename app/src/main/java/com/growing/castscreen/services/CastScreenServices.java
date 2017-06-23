@@ -60,7 +60,7 @@ public class CastScreenServices extends Service {
 
             @Override
             public void onReceive(String data) {
-                Log.i("哈哈哈哈", "onReceive: data:服务端发送的信息：" + data);
+                Log.i("TAG", "onReceive: data:服务端发送的信息：" + data);
             }
         });
 
