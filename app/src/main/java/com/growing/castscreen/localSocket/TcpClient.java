@@ -1,9 +1,12 @@
 package com.growing.castscreen.localSocket;
 
 
+import com.growing.castscreen.MainActivity;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -155,14 +158,18 @@ public class TcpClient implements LClient {
 
     @Override
     public void sendStr(String strData) {
-        synchronized (TcpClient.class) {
-            if (isConnected()) {
-                try {
-                    mDataOutputStream.writeUTF(strData);
-                    mDataOutputStream.flush();
-                } catch (IOException e) {
-                    disConnect(true);
-                    e.printStackTrace();
+        if(mSocket!=null){
+            synchronized (TcpClient.class) {
+                if (isConnected()) {
+                    try {
+                        mDataOutputStream.writeInt(1);
+                        mDataOutputStream.flush();
+                        byte[] bytes = strData.getBytes();
+                        mDataOutputStream.write(bytes);
+                        mDataOutputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -170,18 +177,43 @@ public class TcpClient implements LClient {
 
     @Override
     public void send(byte[] bytes) {
-        synchronized (TcpClient.class) {
-            if (isConnected()) {
-                try {
-                    mDataOutputStream.write(bytes, 0, bytes.length);
-                    mDataOutputStream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(mSocket!=null){
+            synchronized (TcpClient.class) {
+                if (isConnected()) {
+                    try {
+                        mDataOutputStream.write(bytes, 0, bytes.length);
+                        mDataOutputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {
-                disConnect(true);
             }
         }
+    }
+
+    @Override
+    public void sendFile(InputStream inputStream, String fileName) throws IOException {
+        if (fileName == null || inputStream == null) return;
+        if (mSocket != null) {
+            synchronized (TcpClient.class) {
+                if (isConnected()) {
+                    mDataOutputStream.writeInt(MainActivity.TransferCommandTypes.SendFile.ordinal());
+                    mDataOutputStream.writeUTF(fileName);
+                    mDataOutputStream.writeLong(inputStream.available());
+                    int available = inputStream.available();
+                    int length = 0;
+                    byte[] bytes = new byte[1024];
+                    long progress = 0;
+                    while ((length = inputStream.read(bytes, 0, bytes.length)) != -1) {
+                        mDataOutputStream.write(bytes, 0, length);
+                        mDataOutputStream.flush();
+                        progress += length;
+                        System.out.println("| " + (100 * progress / available) + "% |");
+                    }
+                }
+            }
+        }
+
     }
 
     @Override

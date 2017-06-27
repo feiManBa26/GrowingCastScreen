@@ -2,6 +2,8 @@ package com.growing.castscreen.localSocket;
 
 import android.support.annotation.IntDef;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -36,6 +38,9 @@ public interface LClient {
     void sendStr(String strData);
 
     void send(byte[] bytes);
+
+    void sendFile(InputStream inputStream, String fileName) throws IOException;
+
 
     /**
      * @return 返回socket连接状态

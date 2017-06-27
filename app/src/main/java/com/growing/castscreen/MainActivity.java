@@ -116,22 +116,11 @@ public class MainActivity extends BaseAppCommpatActivity {
                                 @Override
                                 public void run() {
                                     try {
-                                        InputStream inputStream = getResources().getAssets().open("open.txt");
-                                        int available = inputStream.available(); //文件的字节长度
-                                        byte[] bytes = new byte[(int) inputStream.available()];
-                                        inputStream.read(bytes);
-                                        Log.i(TAG, "run: " + bytes.length);
-                                        String fileLength = available + "";
-                                        String fileName = "open.txt";
-
+                                        InputStream inputStream = getResources().getAssets().open("Android开发艺术探索.pdf");
                                         LClient lClient = CastScreenServices.getmLClient();
                                         lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
-
-                                        String str = "helloworld";
-                                        byte[] strBytes = str.getBytes("UTF-8");
-                                        int length = strBytes.length;
-                                        lClient.send(intToBytes(length));
-                                        lClient.send(strBytes);
+//                                        lClient.sendFile(inputStream, "Android开发艺术探索.pdf");
+                                        lClient.sendStr("你是一朵小菊花");
                                     } catch (FileNotFoundException e) {
                                         e.printStackTrace();
                                     } catch (IOException e) {

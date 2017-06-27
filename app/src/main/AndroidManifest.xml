@@ -32,6 +32,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CaptureActivity"/>
+        <activity android:name=".shootRecording.CameraRecordingShootActivity"
+            android:label="@string/shoot"/>
 
         <service android:name=".services.CastScreenServices">
             <intent-filter>

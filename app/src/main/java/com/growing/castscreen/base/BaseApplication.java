@@ -1,6 +1,7 @@
 package com.growing.castscreen.base;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import com.growing.castscreen.services.CastScreenServices;
 import com.growing.castscreen.settingData.AppData;
@@ -27,4 +28,10 @@ public class BaseApplication extends Application {
     public static AppData getAppData() {
         return mApplication.mAppData;
     }
+
+    public static void showTost(String msg) {
+        if (msg == null) return;
+        Toast.makeText(mApplication.getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
 }
