@@ -8,12 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.growing.castscreen.base.BaseAppCommpatActivity;
 import com.growing.castscreen.localSocket.LClient;
 import com.growing.castscreen.services.CastScreenServices;
-import com.growing.castscreen.utils.CommonUtil;
+import com.growing.castscreen.shootRecording.CameraRecordingShootActivity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -164,12 +163,13 @@ public class MainActivity extends BaseAppCommpatActivity {
         super.permissionSuccess(requestCode);
         switch (requestCode) {
             case 0x00011:
-                if (CommonUtil.isCameraCanUse()) {
-                    Intent intent = new Intent(this, CaptureActivity.class);
-                    startActivityForResult(intent, CASTSCREEN_TYPE);
-                } else {
-                    Toast.makeText(this, "请打开此应用的摄像头权限！", Toast.LENGTH_SHORT).show();
-                }
+//                if (CommonUtil.isCameraCanUse()) {
+//                    Intent intent = new Intent(this, CaptureActivity.class);
+//                    startActivityForResult(intent, CASTSCREEN_TYPE);
+//                } else {
+//                    Toast.makeText(this, "请打开此应用的摄像头权限！", Toast.LENGTH_SHORT).show();
+//                }
+                startActivity(CameraRecordingShootActivity.getIntent(this));
                 break;
         }
     }

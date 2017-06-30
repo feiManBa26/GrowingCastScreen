@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/re_camera_shoot"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                android:orientation="vertical"
+                tools:showIn="@layout/activity_shoot_recording">
+
+    <ImageView
+        android:id="@+id/img_upload_file"
+        android:layout_width="@dimen/DIMEN_128PX"
+        android:layout_height="@dimen/DIMEN_128PX"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/DIMEN_48PX"
+        android:src="@drawable/castscreen_shoot_upload"/>
+
+    <TextView
+        android:id="@+id/txt_remake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/DIMEN_80PX"
+        android:layout_marginRight="@dimen/DIMEN_40PX"
+        android:text="@string/Remake"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/seventeenSp"/>
+
+</RelativeLayout>

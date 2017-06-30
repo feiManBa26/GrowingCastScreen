@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:showIn="@layout/activity_shoot_recording">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/DIMEN_54PX"
+        android:layout_height="@dimen/DIMEN_54PX"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/castcreen_shoot_close"
+        />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="@dimen/DIMEN_54PX"
+        android:layout_height="@dimen/DIMEN_54PX"
+        android:src="@drawable/castscreenshootswitch"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="20dp"
+        />
+</RelativeLayout>

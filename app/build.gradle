@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.growing.castscreen"
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -17,6 +17,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
+    tasks.whenTaskAdded {
+        task ->
+            if (task.name.contains("lint") ||
+                    task.name.contains("Aidl") ||
+                    task.name.contains("mockableAndroidJar") ||
+                    task.name.contains("UnitTest") ||
+                    task.name.contains("AndroidTest")
+                    //用不到NDK和JNI的也关闭掉
+                    || task.name.contains("Ndk")) {
+                task.enabled = false
+            }
+    }
+
 }
 
 dependencies {

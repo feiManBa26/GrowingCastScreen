@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/re_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:showIn="@layout/activity_shoot_recording">
+
+    <ImageView
+        android:id="@+id/img_recording"
+        android:layout_width="@dimen/DIMEN_108PX"
+        android:layout_height="@dimen/DIMEN_108PX"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/DIMEN_48PX"
+        android:layout_marginRight="@dimen/DIMEN_48PX"
+        android:src="@drawable/castscreen_shoot_video"/>
+
+    <ImageView
+        android:id="@+id/img_camera"
+        android:layout_width="@dimen/DIMEN_128PX"
+        android:layout_height="@dimen/DIMEN_128PX"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/DIMEN_48PX"
+        android:src="@drawable/castscreen_shoot_camera"/>
+
+    <ImageView
+        android:id="@+id/img_shoot"
+        android:layout_width="@dimen/DIMEN_96PX"
+        android:layout_height="@dimen/DIMEN_96PX"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/DIMEN_48PX"
+        android:layout_marginLeft="@dimen/DIMEN_42PX"
+        />
+</RelativeLayout>

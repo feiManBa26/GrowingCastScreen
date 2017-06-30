@@ -1406,4 +1406,5 @@
     <dimen name="DIMEN_1398PX">1398px</dimen>
     <dimen name="DIMEN_1399PX">1399px</dimen>
     <dimen name="DIMEN_1400PX">1400px</dimen>
+    <dimen name="seventeenSp">17sp</dimen>
 </resources>
