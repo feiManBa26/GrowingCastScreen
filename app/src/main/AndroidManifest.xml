@@ -23,7 +23,7 @@
     <!-- 存储权限-->
     <uses-permission android:name="android.permission.WEITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"

@@ -5,7 +5,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="invisible"
-                tools:showIn="@layout/activity_shoot_recording">
+                tools:showIn="@layout/activity_shoot_recording"
+               >
 
     <LinearLayout
         android:id="@+id/ll_recording_time"

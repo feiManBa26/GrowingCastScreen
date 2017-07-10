@@ -72,7 +72,7 @@ public class CastScreenServices extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (mLClient != null) {
-            mLClient.disConnect(false);
+            mLClient.disConnect();
         }
     }
 }

@@ -102,4 +102,5 @@
     <string name="html_no_mjpeg_support">Sorry :(&lt;br&gt;Seems that this browser does not support MJPEG.&lt;br&gt;&lt;br&gt;This check is inaccurate&lt;br&gt;You can disable it in application settings</string>
     <string name="shoot">录制拍摄</string>
     <string name="Remake">重拍</string>
+    <string name="castscreenInformation">1、将手机和电脑连接到同一网络，或者连接电脑\n &#160;&#160;&#160;&#160;&#160;热点 \n2、打开班级平台手机互联，扫描二维码进行连接</string>
 </resources>

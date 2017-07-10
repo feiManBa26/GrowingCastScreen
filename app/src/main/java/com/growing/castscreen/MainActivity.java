@@ -1,22 +1,26 @@
 package com.growing.castscreen;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.growing.castscreen.base.BaseAppCommpatActivity;
 import com.growing.castscreen.localSocket.LClient;
 import com.growing.castscreen.services.CastScreenServices;
 import com.growing.castscreen.shootRecording.CameraRecordingShootActivity;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,17 +28,34 @@ import butterknife.OnClick;
 
 import static com.growing.castscreen.CaptureActivity.RESULT_CODE_QR_SCAN;
 import static com.growing.castscreen.base.BaseApplication.getAppData;
+import static com.growing.castscreen.localSocket.LClient.STATE_CONNECTED;
+import static com.growing.castscreen.localSocket.LClient.STATE_CONNECTING;
+import static com.growing.castscreen.localSocket.LClient.STATE_CONNECT_FAILED;
+import static com.growing.castscreen.localSocket.LClient.STATE_DISCONNECT;
 
 
 public class MainActivity extends BaseAppCommpatActivity {
     private static final String TAG = MainActivity.class.getName();
-
     private static final int CASTSCREEN_TYPE = 100; //二维码录制回调
 
+    @BindView(R.id.re_cast_screen_success_ui)
+    LinearLayout mReCastScreenSuccessUi;
+    @BindView(R.id.re_cast_screen_ui)
+    RelativeLayout mReCastScreenStartUi;
+    @BindView(R.id.btn_disconnect)
+    Button btnDisconnect;
+    @BindView(R.id.txt_camera)
+    TextView txtCamera;
+    @BindView(R.id.txt_cast_screen)
+    TextView txtCastScreen;
+    @BindView(R.id.txt_local_album)
+    TextView txtLocalAlbum;
+    @BindView(R.id.txt_remote_control)
+    TextView txtRemoteControl;
+    @BindView(R.id.re_cast_screen)
+    RelativeLayout reCastScreen;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.imageView2)
-    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +64,6 @@ public class MainActivity extends BaseAppCommpatActivity {
         ButterKnife.bind(this);
         //初始化toolbar
         initToolBar();
-
         //获取wifi服务
 //        @SuppressLint("WifiManagerLeak")
 //        WifiManager wifiManager = (WifiManager) getSystemService(getApplicationContext().WIFI_SERVICE);
@@ -77,18 +97,44 @@ public class MainActivity extends BaseAppCommpatActivity {
                 finish();
             }
         });
-
     }
 
-    @OnClick(R.id.imageView2)
+    @OnClick({R.id.re_cast_screen, R.id.btn_disconnect,
+            R.id.txt_camera, R.id.txt_cast_screen,
+            R.id.txt_local_album,
+            R.id.txt_remote_control})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imageView2:
+            case R.id.re_cast_screen:
                 /**
                  * 1.判断权限是否开启
                  * 1.判断当前应用是否开启相机权限
                  */
                 requestPermission(new String[]{Manifest.permission.CAMERA}, 0x00011);
+                break;
+            case R.id.txt_camera:
+                Log.i(TAG, "onClick: 照相机");
+                startActivity(CameraRecordingShootActivity.getIntent(this));
+                break;
+            case R.id.txt_cast_screen:
+                Log.i(TAG, "onClick: 投屏连接");
+                break;
+            case R.id.txt_local_album:
+                Log.i(TAG, "onClick: 本地相册");
+                break;
+            case R.id.txt_remote_control:
+                Log.i(TAG, "onClick: 功能遥控");
+                break;
+            case R.id.btn_disconnect:
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LClient lClient1 = CastScreenServices.getmLClient();
+                        if (lClient1.disConnect()) {
+                            mHandler.sendEmptyMessage(2);
+                        }
+                    }
+                }).start();
                 break;
         }
     }
@@ -114,16 +160,25 @@ public class MainActivity extends BaseAppCommpatActivity {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    try {
-                                        InputStream inputStream = getResources().getAssets().open("Android开发艺术探索.pdf");
-                                        LClient lClient = CastScreenServices.getmLClient();
-                                        lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
-//                                        lClient.sendFile(inputStream, "Android开发艺术探索.pdf");
-                                        lClient.sendStr("你是一朵小菊花");
-                                    } catch (FileNotFoundException e) {
-                                        e.printStackTrace();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    LClient lClient = CastScreenServices.getmLClient();
+                                    lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
+                                    int connectState = lClient.getConnectState();
+                                    switch (connectState) {
+                                        case STATE_CONNECTING: //正在连接
+                                            break;
+                                        case STATE_CONNECTED: //连接成功
+                                            Message message = new Message();
+                                            message.what = 0;
+                                            mHandler.sendMessage(message);
+                                            break;
+                                        case STATE_CONNECT_FAILED: //连接失败
+                                            Message message1 = new Message();
+                                            message1.what = 1;
+                                            mHandler.sendMessage(message1);
+                                            break;
+                                        case STATE_DISCONNECT: //已断开连接
+
+                                            break;
                                     }
                                 }
                             }).start();
@@ -132,13 +187,36 @@ public class MainActivity extends BaseAppCommpatActivity {
                     break;
             }
         }
-
     }
 
-    public enum TransferCommandTypes {
-        SendFile,
-        SendString,
-        Screen
+    private Handler mHandler = new MyHandler(this);
+
+    private static class MyHandler extends Handler {
+        WeakReference<Context> mReference;
+
+        public MyHandler(Context context) {
+            mReference = new WeakReference<Context>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MainActivity activity = (MainActivity) mReference.get();
+            switch (msg.what) {
+                case 0: //连接成功
+                    activity.mReCastScreenStartUi.setVisibility(View.INVISIBLE);
+                    activity.mReCastScreenSuccessUi.setVisibility(View.VISIBLE);
+                    break;
+                case 1: //连接失败
+                    Log.i(TAG, "handleMessage: 连接失败");
+                    break;
+                case 2:
+                    activity.mReCastScreenStartUi.setVisibility(View.VISIBLE);
+                    activity.mReCastScreenSuccessUi.setVisibility(View.INVISIBLE);
+                    break;
+            }
+
+        }
     }
 
 
@@ -169,7 +247,8 @@ public class MainActivity extends BaseAppCommpatActivity {
 //                } else {
 //                    Toast.makeText(this, "请打开此应用的摄像头权限！", Toast.LENGTH_SHORT).show();
 //                }
-                startActivity(CameraRecordingShootActivity.getIntent(this));
+                Intent intent = new Intent(this, CaptureActivity.class);
+                startActivityForResult(intent, CASTSCREEN_TYPE);
                 break;
         }
     }

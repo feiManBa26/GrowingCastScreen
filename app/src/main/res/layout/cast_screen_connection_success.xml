@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/re_cast_screen_success_ui"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:visibility="invisible"
+              tools:showIn="@layout/activity_main"
+             >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#d6fefe">
+
+        <ImageView
+            android:id="@+id/img_pc"
+            android:layout_width="@dimen/DIMEN_120PX"
+            android:layout_height="@dimen/DIMEN_114PX"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/DIMEN_54PX"
+            android:scaleType="centerCrop"
+            android:src="@drawable/castscreen_list_computer"/>
+
+        <TextView
+            android:id="@+id/txt_pc_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ejiang_pc"
+            android:textColor="#333333"
+            android:layout_below="@+id/img_pc"
+            android:layout_alignLeft="@+id/img_pc"
+            android:layout_alignStart="@+id/img_pc"/>
+
+        <Button
+            android:id="@+id/btn_disconnect"
+            android:layout_width="@dimen/DIMEN_160PX"
+            android:layout_height="@dimen/DIMEN_60PX"
+            android:layout_below="@+id/txt_pc_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/DIMEN_54PX"
+            android:layout_marginTop="@dimen/DIMEN_26PX"
+            android:background="@drawable/shape_cast_un_screen_bg"
+            android:text="断开"
+            android:textColor="#fa3232"
+            android:textSize="14dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txt_camera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:drawableTop="@drawable/castscreen_list_camera"
+            android:gravity="center"
+            android:text="相机"/>
+
+        <TextView
+            android:layout_width="@dimen/DIMEN_1PX"
+            android:layout_height="match_parent"
+            android:background="#ebebeb"/>
+
+        <TextView
+            android:id="@+id/txt_cast_screen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:drawableTop="@drawable/castscreen_list_castscreen"
+            android:gravity="center"
+            android:text="屏幕同步"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/DIMEN_1PX"
+        android:background="#ebebeb"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txt_local_album"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:drawableTop="@drawable/castscreen_list_album"
+            android:gravity="center"
+            android:text="本地相册"/>
+
+        <TextView
+            android:layout_width="@dimen/DIMEN_1PX"
+            android:layout_height="match_parent"
+            android:background="#ebebeb"/>
+
+        <TextView
+            android:id="@+id/txt_remote_control"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:drawableTop="@drawable/castscreen_list_telecontrol"
+            android:gravity="center"
+            android:text="功能遥控"/>
+    </LinearLayout>
+</LinearLayout>

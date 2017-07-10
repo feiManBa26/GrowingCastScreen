@@ -26,10 +26,8 @@ public interface LClient {
 
     /**
      * 断开连接。
-     *
-     * @param needReconnect 是否需要通知外部，重连。
      */
-    void disConnect(boolean needReconnect);
+    boolean disConnect();
 
     boolean isConnected();
 

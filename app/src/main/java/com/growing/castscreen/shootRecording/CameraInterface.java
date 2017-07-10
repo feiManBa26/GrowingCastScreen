@@ -41,7 +41,7 @@ public class CameraInterface {
     }
 
     public interface CamOpenOverCallback {
-        public void cameraHasOpened();
+        public void cameraHasOpened(Camera camera);
 
         public void getCameraBitmap(Bitmap bitmap);
     }
@@ -64,7 +64,7 @@ public class CameraInterface {
             Log.i(TAG, "doOpenCamera: open-----------");
             mCamera = Camera.open(cameraId);
             Log.i(TAG, "doOpenCamera: open--------------over");
-            callback.cameraHasOpened();
+            callback.cameraHasOpened(mCamera);
             this.cameraId = cameraId;
             this.mCallback = callback;
         } catch (Exception e) {

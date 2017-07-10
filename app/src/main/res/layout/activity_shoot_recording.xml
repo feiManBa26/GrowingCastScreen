@@ -17,6 +17,5 @@
 
     <include layout="@layout/shoot_camera_up_un_shoot"
         />
-
     <include layout="@layout/shoot_recording"/>
 </FrameLayout>

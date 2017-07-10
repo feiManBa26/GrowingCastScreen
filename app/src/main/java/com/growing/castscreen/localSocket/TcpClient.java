@@ -1,8 +1,6 @@
 package com.growing.castscreen.localSocket;
 
 
-import com.growing.castscreen.MainActivity;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,7 +36,7 @@ public class TcpClient implements LClient {
              * 2.判断socket是否是连接状态
              */
             if (isConnected()) {
-                disConnect(false);
+                disConnect();
             }
             connectType = STATE_CONNECTING; //正在连接
             int connectNum = 0;
@@ -61,6 +59,7 @@ public class TcpClient implements LClient {
                 } catch (IOException e) {
                     e.printStackTrace();
                     Thread.sleep(500);
+                    connectType = STATE_CONNECT_FAILED;
                 }
             }
 
@@ -74,6 +73,7 @@ public class TcpClient implements LClient {
         } catch (Exception e) {
             e.printStackTrace();
             //重新连接失败后提示用户
+            connectType = STATE_CONNECT_FAILED;
         }
     }
 
@@ -116,19 +116,21 @@ public class TcpClient implements LClient {
     }
 
     @Override
-    public synchronized void disConnect(boolean needReconnect) {
+    public synchronized boolean disConnect() {
         if (mSocket != null) {
             try {
+//                mSocket.shutdownOutput();
+//                mSocket.shutdownInput();
                 closeDataInputStream(mDataInputStream);
                 closeDataOutputStream(mDataOutputStream);
-                mSocket.shutdownOutput();
-                mSocket.shutdownInput();
                 mSocket = null;
+                connectType = STATE_DISCONNECT; //断开连接
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
         }
-        connectType = STATE_DISCONNECT; //断开连接
+        return true;
     }
 
     @Override
@@ -145,12 +147,12 @@ public class TcpClient implements LClient {
                     mDataOutputStream.flush();
                 } catch (IOException e) {
                     callback.onFailed(e);
-                    disConnect(true);
+                    disConnect();
                     e.printStackTrace();
                 }
             } else {
                 callback.onFailed(new Exception("socket is not connected"));
-                disConnect(true);
+                disConnect();
             }
         }
 
@@ -158,7 +160,7 @@ public class TcpClient implements LClient {
 
     @Override
     public void sendStr(String strData) {
-        if(mSocket!=null){
+        if (mSocket != null) {
             synchronized (TcpClient.class) {
                 if (isConnected()) {
                     try {
@@ -177,7 +179,7 @@ public class TcpClient implements LClient {
 
     @Override
     public void send(byte[] bytes) {
-        if(mSocket!=null){
+        if (mSocket != null) {
             synchronized (TcpClient.class) {
                 if (isConnected()) {
                     try {
@@ -197,7 +199,7 @@ public class TcpClient implements LClient {
         if (mSocket != null) {
             synchronized (TcpClient.class) {
                 if (isConnected()) {
-                    mDataOutputStream.writeInt(MainActivity.TransferCommandTypes.SendFile.ordinal());
+                    mDataOutputStream.writeInt(1);
                     mDataOutputStream.writeUTF(fileName);
                     mDataOutputStream.writeLong(inputStream.available());
                     int available = inputStream.available();

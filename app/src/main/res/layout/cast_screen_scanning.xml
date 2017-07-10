@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:id="@+id/re_cast_screen_ui"
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:showIn="@layout/activity_main"
+                android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="@dimen/DIMEN_460PX"
+        android:layout_height="@dimen/DIMEN_370PX"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/DIMEN_88PX"
+        android:src="@drawable/castscreen"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView2"
+        android:layout_marginLeft="@dimen/DIMEN_36PX"
+        android:layout_marginRight="@dimen/DIMEN_36PX"
+        android:layout_marginTop="@dimen/DIMEN_98PX"
+        android:text="连接提示"
+        android:textColor="#333333"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/DIMEN_36PX"
+        android:layout_marginRight="@dimen/DIMEN_36PX"
+        android:layout_marginTop="@dimen/DIMEN_18PX"
+        android:text="@string/castscreenInformation"/>
+
+    <RelativeLayout
+        android:id="@+id/re_cast_screen"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/DIMEN_120PX"
+        android:layout_alignParentBottom="true"
+        android:background="#d6feff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/castscreen_scanning"
+            android:gravity="center"
+            android:text="  扫描二维码连接"
+            android:textColor="#333333"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+</RelativeLayout>

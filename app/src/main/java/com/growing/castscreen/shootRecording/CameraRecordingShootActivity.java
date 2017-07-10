@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +26,8 @@ import com.growing.castscreen.utils.DisplayUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.growing.castscreen.R.id.img_recording_btn;
 
 /**
  * File: CameraRecordingShootActivity.java
@@ -64,13 +68,11 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     LinearLayout llRecoridngTime;
     @BindView(R.id.txt_recoding_time)
     TextView txtRecodingTime;
-    @BindView(R.id.img_recording_btn)
+    @BindView(img_recording_btn)
     ImageView imgReRecording;
     @BindView(R.id.img_go_back_camera)
     ImageView imgGoBackCamera;
 
-    private SurfaceView mSurfaceViewHolder;
-    private CameraHelper mCameraHelper;
     private Camera mCamera;
     private boolean isShoot = false;
     private CameraHelper mHelper;
@@ -78,6 +80,8 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     private SurfaceHolder mHolder;
     float previewRate = -1;
     private boolean isDetectionCamera = false; //默认后置摄像头
+    private boolean isRecording = false; //录制视频切换开关
+    private MediaPlayer mPlayer;
 
 
     @Override
@@ -93,8 +97,6 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
         } else {
             mimgSwith.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     /**
@@ -126,7 +128,7 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     }
 
     @OnClick({R.id.imageView, R.id.imageView2, R.id.img_shoot, R.id.img_recording, R.id.img_camera
-            , R.id.img_recording_btn, R.id.txt_remake, R.id.img_go_back_camera})
+            , img_recording_btn, R.id.txt_remake, R.id.img_go_back_camera})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.img_camera: //拍摄
@@ -155,6 +157,53 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
             case R.id.img_go_back_camera:
                 clickGoBackCameraUI();
                 break;
+            case R.id.img_recording_btn: //开始录制视频
+                Log.i(TAG, "OnClick: 开始录制视频~");
+                //初始化录制视频--资源
+                //暂停录制视频--释放资源
+                if (!isRecording) {
+                    RecordingInterface.getInstence().startRecording(mCamera, mSurfaceView.getHolder());
+                } else {
+                    RecordingInterface.getInstence().stopRecording();
+                    if (mPlayer == null) {
+                        mPlayer = new MediaPlayer();
+                    }
+                    play();
+                }
+                isRecording = !isRecording;
+                break;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        //先判断是否正在播放
+        if (mPlayer.isPlaying()) {
+//            //如果正在播放我们就先保存这个播放位置
+//            position = mPlayer.getCurrentPosition()
+//            ;
+            mPlayer.stop();
+        }
+        super.onPause();
+    }
+
+
+    private void play() {
+        try {
+            Log.d("play:", "");
+            mPlayer.reset();
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            //设置需要播放的视频
+            String path = RecordingInterface.getInstence().getVecordFile().getAbsolutePath();
+            mPlayer.setDataSource(path);
+            Log.d("play:", path);
+            //把视频画面输出到SurfaceView
+            mPlayer.setDisplay(mSurfaceView.getHolder());
+            mPlayer.prepare();
+            //播放
+            mPlayer.start();
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
@@ -173,9 +222,10 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
 
 
     @Override
-    public void cameraHasOpened() {
+    public void cameraHasOpened(Camera camera) {
+        this.mCamera = camera;
         SurfaceHolder holder = mSurfaceView.getHolder();
-        CameraInterface.getInstence().doStartPreview(this,holder, previewRate);
+        CameraInterface.getInstence().doStartPreview(this, holder, previewRate);
     }
 
     @Override
@@ -255,6 +305,4 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
         //显示切换摄像头页面
         mimgSwith.setVisibility(View.VISIBLE);
     }
-
-
 }
