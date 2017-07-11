@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -147,28 +146,32 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
                 }
                 isDetectionCamera = !isDetectionCamera;
                 break;
-            case R.id.img_recording: //录制
+            case R.id.img_recording: //显示录制页面
                 clickRecording();
                 break;
             case R.id.txt_remake: //重新拍摄
                 resetCameraUi();
                 CameraInterface.getInstence().oneMoreTimeEnterCamera(true);
                 break;
-            case R.id.img_go_back_camera:
+            case R.id.img_go_back_camera: //录像切换回拍摄页面
                 clickGoBackCameraUI();
+                CameraInterface.getInstence().closeMediaRes();
+                CameraInterface.getInstence().doStartPreview(this, mSurfaceView.getHolder());
                 break;
             case R.id.img_recording_btn: //开始录制视频
                 Log.i(TAG, "OnClick: 开始录制视频~");
                 //初始化录制视频--资源
                 //暂停录制视频--释放资源
                 if (!isRecording) {
-                    RecordingInterface.getInstence().startRecording(mCamera, mSurfaceView.getHolder());
+                    CameraInterface.getInstence().closeMediaRes();
+                    CameraInterface.getInstence().startRecording();
+                    imgReRecording.setImageResource(R.drawable.castscreen_shoot_shooting_end);
+                    imgGoBackCamera.setVisibility(View.INVISIBLE);
                 } else {
-                    RecordingInterface.getInstence().stopRecording();
-                    if (mPlayer == null) {
-                        mPlayer = new MediaPlayer();
-                    }
-                    play();
+                    imgReRecording.setImageResource(R.drawable.castscreen_shoot_shooting_start);
+                    CameraInterface.getInstence().stopRecording();
+                    imgGoBackCamera.setVisibility(View.VISIBLE);
+                    CameraInterface.getInstence().PlayRecordingMedia();
                 }
                 isRecording = !isRecording;
                 break;
@@ -179,32 +182,9 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     protected void onPause() {
         //先判断是否正在播放
         if (mPlayer.isPlaying()) {
-//            //如果正在播放我们就先保存这个播放位置
-//            position = mPlayer.getCurrentPosition()
-//            ;
             mPlayer.stop();
         }
         super.onPause();
-    }
-
-
-    private void play() {
-        try {
-            Log.d("play:", "");
-            mPlayer.reset();
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            //设置需要播放的视频
-            String path = RecordingInterface.getInstence().getVecordFile().getAbsolutePath();
-            mPlayer.setDataSource(path);
-            Log.d("play:", path);
-            //把视频画面输出到SurfaceView
-            mPlayer.setDisplay(mSurfaceView.getHolder());
-            mPlayer.prepare();
-            //播放
-            mPlayer.start();
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
     }
 
 
@@ -222,10 +202,9 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
 
 
     @Override
-    public void cameraHasOpened(Camera camera) {
-        this.mCamera = camera;
+    public void cameraHasOpened() {
         SurfaceHolder holder = mSurfaceView.getHolder();
-        CameraInterface.getInstence().doStartPreview(this, holder, previewRate);
+        CameraInterface.getInstence().doStartPreview(this, holder);
     }
 
     @Override

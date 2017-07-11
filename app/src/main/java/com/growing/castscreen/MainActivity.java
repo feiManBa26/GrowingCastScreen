@@ -248,7 +248,7 @@ public class MainActivity extends BaseAppCommpatActivity {
 //                    Toast.makeText(this, "请打开此应用的摄像头权限！", Toast.LENGTH_SHORT).show();
 //                }
                 Intent intent = new Intent(this, CaptureActivity.class);
-                startActivityForResult(intent, CASTSCREEN_TYPE);
+                this.startActivityForResult(intent, CASTSCREEN_TYPE);
                 break;
         }
     }
