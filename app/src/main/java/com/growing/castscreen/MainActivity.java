@@ -16,9 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.growing.castscreen.base.BaseAppCommpatActivity;
+import com.growing.castscreen.base.BaseApplication;
 import com.growing.castscreen.localSocket.LClient;
 import com.growing.castscreen.services.CastScreenServices;
 import com.growing.castscreen.shootRecording.CameraRecordingShootActivity;
+import com.growing.castscreen.utils.TypeOperating;
+import com.growing.castscreen.utils.WifiConnectionUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -62,28 +65,15 @@ public class MainActivity extends BaseAppCommpatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        //初始化toolbar
         initToolBar();
-        //获取wifi服务
-//        @SuppressLint("WifiManagerLeak")
-//        WifiManager wifiManager = (WifiManager) getSystemService(getApplicationContext().WIFI_SERVICE);
-//        //判断wifi是否开启
-//        if (!wifiManager.isWifiEnabled()) {
-//            wifiManager.setWifiEnabled(true);
-//        }
-//        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-//        int ipAddress = wifiInfo.getIpAddress();
-//        String ip = intToIp(ipAddress);
-//        Log.i(TAG, "onCreate: " + ip);
-
     }
 
-    private String intToIp(int i) {
-
-        return (i & 0xFF) + "." +
-                ((i >> 8) & 0xFF) + "." +
-                ((i >> 16) & 0xFF) + "." +
-                (i >> 24 & 0xFF);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!WifiConnectionUtils.isWifiConnection(BaseApplication.getmApplication())) {
+            showDialogMsg("启用改功能需要wifi联网是否开启wifi连接？",TypeOperating.TYPE_WIFI_OPEN);
+        }
     }
 
     private void initToolBar() {
@@ -118,6 +108,7 @@ public class MainActivity extends BaseAppCommpatActivity {
                 break;
             case R.id.txt_cast_screen:
                 Log.i(TAG, "onClick: 投屏连接");
+                startActivity(CastScreenActivity.getIntent(this));
                 break;
             case R.id.txt_local_album:
                 Log.i(TAG, "onClick: 本地相册");
@@ -160,6 +151,7 @@ public class MainActivity extends BaseAppCommpatActivity {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mHandler.sendEmptyMessage(3);
                                     LClient lClient = CastScreenServices.getmLClient();
                                     lClient.connect(getAppData().getServerIp(), getAppData().getServerProt());
                                     int connectState = lClient.getConnectState();
@@ -177,7 +169,6 @@ public class MainActivity extends BaseAppCommpatActivity {
                                             mHandler.sendMessage(message1);
                                             break;
                                         case STATE_DISCONNECT: //已断开连接
-
                                             break;
                                     }
                                 }
@@ -204,15 +195,21 @@ public class MainActivity extends BaseAppCommpatActivity {
             MainActivity activity = (MainActivity) mReference.get();
             switch (msg.what) {
                 case 0: //连接成功
+                    activity.closeProgressDialog();
                     activity.mReCastScreenStartUi.setVisibility(View.INVISIBLE);
                     activity.mReCastScreenSuccessUi.setVisibility(View.VISIBLE);
                     break;
                 case 1: //连接失败
                     Log.i(TAG, "handleMessage: 连接失败");
+                    activity.closeProgressDialog();
+                    activity.showDialogMsg("连接失败请检查~",TypeOperating.TYPE_CONNECTION);
                     break;
                 case 2:
                     activity.mReCastScreenStartUi.setVisibility(View.VISIBLE);
                     activity.mReCastScreenSuccessUi.setVisibility(View.INVISIBLE);
+                    break;
+                case 3:
+                    activity.showProgressDialog("正在验证连接请稍后");
                     break;
             }
 
@@ -241,14 +238,17 @@ public class MainActivity extends BaseAppCommpatActivity {
         super.permissionSuccess(requestCode);
         switch (requestCode) {
             case 0x00011:
-//                if (CommonUtil.isCameraCanUse()) {
-//                    Intent intent = new Intent(this, CaptureActivity.class);
-//                    startActivityForResult(intent, CASTSCREEN_TYPE);
-//                } else {
-//                    Toast.makeText(this, "请打开此应用的摄像头权限！", Toast.LENGTH_SHORT).show();
-//                }
                 Intent intent = new Intent(this, CaptureActivity.class);
                 this.startActivityForResult(intent, CASTSCREEN_TYPE);
+                break;
+        }
+    }
+
+    @Override
+    public void goType(@TypeOperating.typeOperating int type) {
+        switch (type) {
+            case TypeOperating.TYPE_WIFI_OPEN:
+                WifiConnectionUtils.openWifi(BaseApplication.getmApplication());
                 break;
         }
     }

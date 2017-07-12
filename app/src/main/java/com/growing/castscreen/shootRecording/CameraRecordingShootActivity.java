@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -80,7 +79,6 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     float previewRate = -1;
     private boolean isDetectionCamera = false; //默认后置摄像头
     private boolean isRecording = false; //录制视频切换开关
-    private MediaPlayer mPlayer;
 
 
     @Override
@@ -156,7 +154,7 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
             case R.id.img_go_back_camera: //录像切换回拍摄页面
                 clickGoBackCameraUI();
                 CameraInterface.getInstence().closeMediaRes();
-                CameraInterface.getInstence().doStartPreview(this, mSurfaceView.getHolder());
+                CameraInterface.getInstence().doStartPreview(this, mSurfaceView.getHolder(), previewRate);
                 break;
             case R.id.img_recording_btn: //开始录制视频
                 Log.i(TAG, "OnClick: 开始录制视频~");
@@ -180,10 +178,6 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
 
     @Override
     protected void onPause() {
-        //先判断是否正在播放
-        if (mPlayer.isPlaying()) {
-            mPlayer.stop();
-        }
         super.onPause();
     }
 
@@ -204,7 +198,7 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     @Override
     public void cameraHasOpened() {
         SurfaceHolder holder = mSurfaceView.getHolder();
-        CameraInterface.getInstence().doStartPreview(this, holder);
+        CameraInterface.getInstence().doStartPreview(this, holder,previewRate);
     }
 
     @Override

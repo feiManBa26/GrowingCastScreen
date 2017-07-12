@@ -41,12 +41,12 @@ public class TcpClient implements LClient {
             connectType = STATE_CONNECTING; //正在连接
             int connectNum = 0;
             boolean isConnect = false;
-            while (connectNum < 5) {
+            while (connectNum < 2) {
                 connectNum++;
                 try {
                     mSocket = new Socket();
 //                    mSocket.setKeepAlive(true);
-//                    mSocket.setSoTimeout(2 * 3 * 60 * 1000);//inputStream read 超时时间
+                    mSocket.setSoTimeout(5 * 1000);//inputStream read 超时时间
 //                    mSocket.setTcpNoDelay(true);
                     mSocket.connect(new InetSocketAddress(ip, port));
                     if (mSocket.isConnected()) {
@@ -156,6 +156,22 @@ public class TcpClient implements LClient {
             }
         }
 
+    }
+
+    @Override
+    public void send(int type) {
+        if (mSocket != null) {
+            synchronized (TcpClient.class) {
+                if (isConnected()) {
+                    try {
+                        mDataOutputStream.writeInt(type);
+                        mDataOutputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     @Override

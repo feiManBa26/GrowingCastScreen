@@ -117,23 +117,24 @@ public class CameraInterface implements MediaRecorder.OnErrorListener, MediaReco
     /**
      * 开启预览模式
      */
-    public void doStartPreview(Context context, SurfaceHolder holder) {
+    public void doStartPreview(Context context, SurfaceHolder holder, float previewRate) {
         Log.i(TAG, "doStartPreview: isStartPreview");
         if (holder == null) return;
         if (mCamera == null) {
             openCamera();
         }
         this.mSurfaceHolder = holder;
+        this.mPreviwRate = previewRate;
         mParams = mCamera.getParameters();
         mParams.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
         CamParaUtil.getInstance().printSupportPictureSize(mParams);
         CamParaUtil.getInstance().printSupportPreviewSize(mParams);
         //设置PreviewSize和PictureSize
         Camera.Size pictureSize = CamParaUtil.getInstance().getPropPictureSize(
-                mParams.getSupportedPictureSizes(), mPreviwRate, 1080);
+                mParams.getSupportedPictureSizes(), mPreviwRate, 800);
         mParams.setPictureSize(pictureSize.width, pictureSize.height);
         Camera.Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
-                mParams.getSupportedPreviewSizes(), mPreviwRate, 1080);
+                mParams.getSupportedPreviewSizes(), mPreviwRate, 800);
         mParams.setPreviewSize(previewSize.width, previewSize.height);
 
 //            mCamera.setDisplayOrientation(90);
@@ -288,7 +289,7 @@ public class CameraInterface implements MediaRecorder.OnErrorListener, MediaReco
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);// 音频格式
         mMediaRecorder.setVideoSize(640, 480);// 设置分辨率
         // mMediaRecorder.setVideoFrameRate(16);// 这个我把它去掉了，感觉没什么用
-        mMediaRecorder.setVideoEncodingBitRate(1 * 1024 * 512);// 设置帧频率，然后就清晰了
+        mMediaRecorder.setVideoEncodingBitRate(10 * 1024 * 512);// 设置帧频率，然后就清晰了
         mMediaRecorder.setOrientationHint(90);// 输出旋转90度，保持竖屏录制
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);// 视频录制格式
         // mediaRecorder.setMaxDuration(Constant.MAXVEDIOTIME * 1000);

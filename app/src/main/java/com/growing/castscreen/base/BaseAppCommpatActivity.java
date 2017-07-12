@@ -1,5 +1,6 @@
 package com.growing.castscreen.base;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.growing.castscreen.utils.TypeOperating;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ public class BaseAppCommpatActivity extends AppCompatActivity {
 
     private final String TAG = "MPermissions";
     private int REQUEST_CODE_PERMISSION = 0x00099;
+    private ProgressDialog mDialog;
 
     /**
      * 请求权限
@@ -168,4 +172,43 @@ public class BaseAppCommpatActivity extends AppCompatActivity {
         permissionFail(REQUEST_CODE_PERMISSION);
     }
 
+
+    public void showDialogMsg(String strMsg, final @TypeOperating.typeOperating int type) {
+        if (strMsg == null) return;
+        new android.app.AlertDialog.Builder(this).setMessage(strMsg).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface anInterface, int i) {
+            }
+        }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface anInterface, int i) {
+                goType(type);
+            }
+        }).create().show();
+    }
+
+    public void goType(@TypeOperating.typeOperating int type) {
+    }
+
+    public void showProgressDialog(String strMsg) {
+        if (strMsg == null) return;
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(this);
+        }
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.setMessage(strMsg);
+        mDialog.show();
+    }
+
+    public void closeProgressDialog() {
+        if (mDialog == null) return;
+        if (mDialog.isShowing())
+            mDialog.dismiss();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDialog = null;
+    }
 }

@@ -24,10 +24,13 @@
     <uses-permission android:name="android.permission.WEITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
     <user-permission android:name="android.permission.FLASHLIGHT"/>
     <user-permission android:name="android.permission.MOUNT_UNMOUNT_FILRSYSTEMS"/>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -36,7 +39,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeToolBar">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -47,12 +51,25 @@
         <activity
             android:name=".shootRecording.CameraRecordingShootActivity"
             android:label="@string/shoot"/>
-
+        <activity android:name=".CastScreenActivity"/>
+        <!--传递数据连接控制服务-->
         <service android:name=".services.CastScreenServices">
             <intent-filter>
                 <action android:name="castScreenServices"/>
             </intent-filter>
         </service>
+        <!--投屏连接控制服务-->
+        <service android:name=".services.CastScreenServerService">
+            <intent-filter>
+                <action android:name="castScreenServerServices"/>
+            </intent-filter>
+        </service>
+        <receiver android:name=".receiver.WifiRecevier">
+            <intent-filter>
+                <action android:name="android.NET.wifi.RSSI_CHANGED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="android.Net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
     </application>
-
 </manifest>

@@ -33,6 +33,8 @@ public interface LClient {
 
     void send(byte[] bytes, ISendCallBack callback);
 
+    void send(int type);
+
     void sendStr(String strData);
 
     void send(byte[] bytes);

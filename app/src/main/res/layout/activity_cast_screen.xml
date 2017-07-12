@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/img_cast_screen"
+        android:layout_width="@dimen/DIMEN_460PX"
+        android:layout_height="@dimen/DIMEN_370PX"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/DIMEN_112PX"
+        android:src="@drawable/castscreen_casting"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_cast_screen"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/DIMEN_36PX"
+        android:text="投屏中"
+        android:textColor="#333333"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/btn_cast_screen"
+        android:layout_width="@dimen/DIMEN_240PX"
+        android:layout_height="@dimen/DIMEN_88PX"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/DIMEN_112PX"
+        android:background="@drawable/shape_cast_screen_btn_bg"
+        android:text="结束投屏"
+        android:textColor="@android:color/white"/>
+</RelativeLayout>

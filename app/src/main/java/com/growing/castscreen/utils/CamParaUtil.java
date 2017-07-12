@@ -53,7 +53,7 @@ public class CamParaUtil {
 			i++;
 		}
 		if(i == list.size()){
-			i = 0;//���û�ҵ�����ѡ��С��size
+			i = 0;//如果没找到，就选最小的size
 		}
 		return list.get(i);
 	}
