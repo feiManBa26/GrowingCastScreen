@@ -1,8 +1,12 @@
 package com.growing.castscreen.localSocket;
 
 
+import com.growing.castscreen.pushHelper.UploadFileStatusInterFace;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -182,7 +186,7 @@ public class TcpClient implements LClient {
                     try {
                         mDataOutputStream.writeInt(1);
                         mDataOutputStream.flush();
-                        byte[] bytes = strData.getBytes();
+                        byte[] bytes = strData.getBytes("UTF-8");
                         mDataOutputStream.write(bytes);
                         mDataOutputStream.flush();
                     } catch (IOException e) {
@@ -193,21 +197,6 @@ public class TcpClient implements LClient {
         }
     }
 
-    @Override
-    public void send(byte[] bytes) {
-        if (mSocket != null) {
-            synchronized (TcpClient.class) {
-                if (isConnected()) {
-                    try {
-                        mDataOutputStream.write(bytes, 0, bytes.length);
-                        mDataOutputStream.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public void sendFile(InputStream inputStream, String fileName) throws IOException {
@@ -232,6 +221,45 @@ public class TcpClient implements LClient {
             }
         }
 
+    }
+
+    @Override
+    public void sendLocalFile(String filePath, UploadFileStatusInterFace interFace) {
+        if (filePath == null || filePath.isEmpty()) return;
+        File file = new File(filePath);
+        String fileName = file.getName();
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            if (inputStream == null) return;
+            if (mSocket != null) {
+                synchronized (TcpClient.class) {
+                    if (isConnected()) {
+                        mDataOutputStream.writeInt(0);
+                        mDataOutputStream.writeUTF(fileName);
+                        mDataOutputStream.writeLong(inputStream.available());
+                        int available = inputStream.available();
+                        int length = 0;
+                        byte[] bytes = new byte[1024];
+                        long progress = 0;
+                        while ((length = inputStream.read(bytes, 0, bytes.length)) != -1) {
+                            mDataOutputStream.write(bytes, 0, length);
+                            mDataOutputStream.flush();
+                            progress += length;
+                            System.out.println("| " + (100 * progress / available) + "% |");
+                        }
+                        inputStream.close();
+                        if (interFace != null) {
+                            interFace.uploadComplete();
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            if (interFace != null) {
+                interFace.uploadError(e);
+            }
+        }
     }
 
     @Override

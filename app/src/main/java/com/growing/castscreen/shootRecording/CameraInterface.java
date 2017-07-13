@@ -49,6 +49,10 @@ public class CameraInterface implements MediaRecorder.OnErrorListener, MediaReco
     private CameraInterface() {
     }
 
+    public String getFilePath() {
+        return mFilePath;
+    }
+
     private File getVecordFile() {
         return mVecordFile;
     }

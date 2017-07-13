@@ -29,8 +29,10 @@ public class WifiRecevier extends BroadcastReceiver {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (info.getState().equals(NetworkInfo.State.DISCONNECTED)) {
                     System.out.println("wifi网络连接断开");
-                    BaseApplication.getmApplication().startActivity(new Intent(BaseApplication.getmApplication(), MainActivity.class).
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    if(BaseApplication.isRun()){
+                        BaseApplication.getmApplication().startActivity(new Intent(BaseApplication.getmApplication(), MainActivity.class).
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    }
                 } else if (info.getState().equals(NetworkInfo.State.CONNECTED)) {
                     WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();

@@ -72,7 +72,7 @@ public class MainActivity extends BaseAppCommpatActivity {
     protected void onStart() {
         super.onStart();
         if (!WifiConnectionUtils.isWifiConnection(BaseApplication.getmApplication())) {
-            showDialogMsg("启用改功能需要wifi联网是否开启wifi连接？",TypeOperating.TYPE_WIFI_OPEN);
+            showDialogMsg("启用改功能需要wifi联网是否开启wifi连接？", TypeOperating.TYPE_WIFI_OPEN);
         }
     }
 
@@ -84,7 +84,11 @@ public class MainActivity extends BaseAppCommpatActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                if (CastScreenServices.getmLClient().isConnected()) {
+                    showDialogMsg("是否断开连接？", TypeOperating.TYPE_SOCKET_ISCLIENT);
+                } else {
+                    finish();
+                }
             }
         });
     }
@@ -202,7 +206,7 @@ public class MainActivity extends BaseAppCommpatActivity {
                 case 1: //连接失败
                     Log.i(TAG, "handleMessage: 连接失败");
                     activity.closeProgressDialog();
-                    activity.showDialogMsg("连接失败请检查~",TypeOperating.TYPE_CONNECTION);
+                    activity.showDialogMsg("连接失败请检查~", TypeOperating.TYPE_CONNECTION);
                     break;
                 case 2:
                     activity.mReCastScreenStartUi.setVisibility(View.VISIBLE);
@@ -249,6 +253,10 @@ public class MainActivity extends BaseAppCommpatActivity {
         switch (type) {
             case TypeOperating.TYPE_WIFI_OPEN:
                 WifiConnectionUtils.openWifi(BaseApplication.getmApplication());
+                break;
+            case TypeOperating.TYPE_SOCKET_ISCLIENT:
+                CastScreenServices.getmLClient().disConnect();
+                finish();
                 break;
         }
     }

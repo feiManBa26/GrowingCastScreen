@@ -15,9 +15,10 @@ import java.lang.annotation.RetentionPolicy;
 public class TypeOperating {
     public static final int TYPE_WIFI_OPEN = 0;
     public static final int TYPE_CONNECTION = 1;
+    public static final int TYPE_SOCKET_ISCLIENT = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_WIFI_OPEN, TYPE_CONNECTION})
+    @IntDef({TYPE_WIFI_OPEN, TYPE_CONNECTION,TYPE_SOCKET_ISCLIENT})
     public @interface typeOperating {
 
     }

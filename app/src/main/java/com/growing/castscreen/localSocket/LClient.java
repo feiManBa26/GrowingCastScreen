@@ -2,6 +2,8 @@ package com.growing.castscreen.localSocket;
 
 import android.support.annotation.IntDef;
 
+import com.growing.castscreen.pushHelper.UploadFileStatusInterFace;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Retention;
@@ -30,16 +32,11 @@ public interface LClient {
     boolean disConnect();
 
     boolean isConnected();
-
     void send(byte[] bytes, ISendCallBack callback);
-
     void send(int type);
-
     void sendStr(String strData);
-
-    void send(byte[] bytes);
-
     void sendFile(InputStream inputStream, String fileName) throws IOException;
+    void sendLocalFile(String filePath , UploadFileStatusInterFace interFace);
 
 
     /**

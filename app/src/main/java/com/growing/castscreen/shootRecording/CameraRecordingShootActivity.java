@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -18,7 +17,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.growing.castscreen.R;
+import com.growing.castscreen.base.BaseAppCommpatActivity;
 import com.growing.castscreen.camera.CameraHelper;
+import com.growing.castscreen.localSocket.LClient;
+import com.growing.castscreen.pushHelper.UploadFileStatusInterFace;
+import com.growing.castscreen.services.CastScreenServices;
 import com.growing.castscreen.utils.DisplayUtils;
 
 import butterknife.BindView;
@@ -34,7 +37,7 @@ import static com.growing.castscreen.R.id.img_recording_btn;
  * Create: 2017-06-27 17:01
  */
 
-public class CameraRecordingShootActivity extends AppCompatActivity implements CameraInterface.CamOpenOverCallback {
+public class CameraRecordingShootActivity extends BaseAppCommpatActivity implements CameraInterface.CamOpenOverCallback {
 
     @BindView(R.id.surfaceView)
     CameraSurfaceView mSurfaceView;
@@ -125,7 +128,7 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     }
 
     @OnClick({R.id.imageView, R.id.imageView2, R.id.img_shoot, R.id.img_recording, R.id.img_camera
-            , img_recording_btn, R.id.txt_remake, R.id.img_go_back_camera})
+            , img_recording_btn, R.id.txt_remake, R.id.img_go_back_camera, R.id.img_upload_file})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.img_camera: //拍摄
@@ -173,14 +176,36 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
                 }
                 isRecording = !isRecording;
                 break;
+            case R.id.img_upload_file: //上传文件资源
+                CameraRecordingShootActivity.this.showProgressDialog("正在上传请稍后~");
+                uploadFileToServer(CameraInterface.getInstence().getFilePath());
+                break;
         }
+    }
+
+    /**
+     * @param filePath
+     */
+    private void uploadFileToServer(String filePath) {
+        if (filePath == null || filePath.length() == 0) return;
+        LClient lClient = CastScreenServices.getmLClient();
+        lClient.sendLocalFile(filePath, new UploadFileStatusInterFace() {
+            @Override
+            public void uploadComplete() {
+                CameraRecordingShootActivity.this.closeProgressDialog();
+            }
+            @Override
+            public void uploadError(Exception e) {
+                System.out.print(e.toString());
+                CameraRecordingShootActivity.this.closeProgressDialog();
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
     }
-
 
     /**
      * 初始化surfaceView配置
@@ -198,7 +223,7 @@ public class CameraRecordingShootActivity extends AppCompatActivity implements C
     @Override
     public void cameraHasOpened() {
         SurfaceHolder holder = mSurfaceView.getHolder();
-        CameraInterface.getInstence().doStartPreview(this, holder,previewRate);
+        CameraInterface.getInstence().doStartPreview(this, holder, previewRate);
     }
 
     @Override

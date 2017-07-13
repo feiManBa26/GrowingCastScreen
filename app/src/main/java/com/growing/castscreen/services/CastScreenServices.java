@@ -21,12 +21,13 @@ import com.growing.castscreen.localSocket.TcpClient;
 
 public class CastScreenServices extends Service {
     private static final String TAG = CastScreenServices.class.getName();
+    private static CastScreenServices mCastScreenServices;
 
     public static LClient getmLClient() {
-        return mLClient;
+        return mCastScreenServices.mLClient;
     }
 
-    public static LClient mLClient;
+    public LClient mLClient;
 
     public static Intent getIntent(Context context) {
         return new Intent(context, CastScreenServices.class).setAction("castScreenServices");
@@ -42,6 +43,7 @@ public class CastScreenServices extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        this.mCastScreenServices = this;
         mLClient = new TcpClient(new SocketIOCallback() {
             @Override
             public void onConnect(LClient transceiver) {
@@ -63,16 +65,14 @@ public class CastScreenServices extends Service {
                 Log.i("TAG", "onReceive: data:服务端发送的信息：" + data);
             }
         });
-
-
     }
-
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mLClient != null) {
             mLClient.disConnect();
+            mLClient = null;
         }
     }
 }
